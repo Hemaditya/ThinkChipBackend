@@ -1,6 +1,6 @@
-# -WIDGET-GameEngagement
+# ThinkChipBackend
 
-This will be code for the widget that we will build for user engagement in games. 
+This will be the backend Engine for all the widgets we will be building. 
 We will seperate different modules and keep them seperately.
 
 ## [MODULE] - filters
