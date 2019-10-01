@@ -39,7 +39,7 @@ def apply_notch_filter(data):
             data {type:np.ndarray, shape:(epochs,config.CHANNELS,chunk_size), ndim:3}
                 - Input data that needs to filtered.
                 - The data comes divided in epochs.
-                - It is necessary for the input to have an ndim of 3 or else thi function 
+                - It is necessary for the input to have an ndim of 3 or else this function 
                 will throw an exception
 
         Outputs:
