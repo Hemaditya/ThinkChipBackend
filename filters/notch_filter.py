@@ -3,6 +3,7 @@
 """
 from scipy import signal # To use butter filter
 import numpy as np
+import config
 
 def notch_filter(data,states):
     """
@@ -28,9 +29,10 @@ def notch_filter(data,states):
     notch_freq_Hz = np.array([50.0])  # main + harmonic frequencies
     for freq_Hz in np.nditer(notch_freq_Hz):  # loop over each target freq
             bp_stop_Hz = freq_Hz + 3.0*np.array([-1, 1])  # set the stop band
-            b, a = signal.butter(3, bp_stop_Hz/(250 / 2.0), 'bandstop')
+            b, a = signal.butter(3, bp_stop_Hz/(config.SAMPLING_FREQUENCY / 2.0), 'bandstop')
             notchOutput, state = signal.lfilter(b, a, data, zi=states)
             return notchOutput, state
+
 
 
 def apply_notch_filter(data):
