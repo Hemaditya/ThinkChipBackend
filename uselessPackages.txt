@@ -1,0 +1,5 @@
+# The below packages are used for neovim and are useless for the functionality of the project
+greenlet==0.4.15
+msgpack==0.6.2
+neovim==0.3.1
+pynvim==0.3.2
