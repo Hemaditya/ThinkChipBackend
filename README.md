@@ -3,6 +3,9 @@
 This will be the backend Engine for all the widgets we will be building. 
 We will seperate different modules and keep them seperately.
 
+## [MODULE] - test
+This module has jupyter notebooks which are used to test different modules.
+
 ## [MODULE] - filters
 This is the module which will hold all the filters that are applied to the raw signal as a processing step.
 
