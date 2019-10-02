@@ -21,3 +21,7 @@ This is the module which is responsible for creating different sessions for diff
 
 ## [MODULE] - widgets
 This is the module which holds all the Widgets that we will experiment on.
+
+# TODO 
+- [] finish coding the eye_\_ blink module and test it
+- [] 
