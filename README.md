@@ -26,5 +26,8 @@ This is the module which is responsible for creating different sessions for diff
 This is the module which holds all the Widgets that we will experiment on.
 
 # TODO 
-- [] finish coding the eye_\_ blink module and test it
-- [] 
+- [] Split incoming data into overlapping blocks.
+- [] Functions - to get energy from a chunk, to do thresholding
+- [] Run the incoming blinks with these functions and output Blink or No Blink
+- [] Store incoming chunks as an array and delete eye blink chunks from the array.
+- [] Pass the resultant chunks array 
