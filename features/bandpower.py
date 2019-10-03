@@ -51,4 +51,47 @@ def bandpower(data, sf, band, window_sec=None, relative=False):
         bp /= simps(psd, dx=freq_res)
     return bp
 
+def get_bandpower(data, channels=[0]):
+    """
+       About this function:
+            - Gets the bandpower of a signal and seperates each bands into 5 categories:
+            - delta(0.2-4Hz)
+            - theta(4-8Hz)
+            - alpha(8-13Hz)
+            - beta(15-30Hz)
+            - gamma(30-50Hz)
 
+        Inputs:
+            data:{type:np.ndarray, shape:(epochs,channels,chunk_size)}
+                - Input time signal data
+            channels {type:list}
+                - All the channels for which you want the bandpower.
+
+        Outputs:
+            bandPower {type:np.ndarray,shape:(epochs,channels,5)}
+                - Bandpower of all the channels for all the epochs
+
+    """
+    oldData = np.copy(data)
+
+    # create band limtis
+    band = {}
+    band['delta'] = [1,4]
+    band['theta'] = [4,8]
+    band['alpha'] = [8,14]
+    band['beta'] = [16,30]
+    band['gamma'] = [30,50]
+
+    data = data.transpose(1,0,2)
+    data = data[channels]
+    data = data.reshape(data.shape[0],-1)
+    chanD = []
+    for i,c in enumerate(data):
+            bandP = []
+            for k in band:
+                    bp = b.bandpower(c,250.0,band[k],2)
+                    bandP.append(bp)
+            chanD.append(bandP)
+
+    bandPower = np.asarray(chanD).tranpose(1,0,2)
+    return bandPower
