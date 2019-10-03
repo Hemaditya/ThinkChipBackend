@@ -16,3 +16,18 @@ SAMPLING_FREQUENCY = 250
 
 # CHANNELS  variable is also device specific
 CHANNELS = 8
+
+# threshold class will hold thresholds for all the different artifacts 
+class threshold():
+    '''
+        This module is a place to hold different thresholds
+    '''
+
+    def __init__(self):
+        
+        EYE_BLINK = 100 # After signal is bandpassed between 1,10
+
+THRESHOLD = threshold()
+
+
+
