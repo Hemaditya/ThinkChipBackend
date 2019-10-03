@@ -29,6 +29,7 @@ This is the module which holds all the Widgets that we will experiment on.
 - [x] Split incoming data into overlapping blocks.
 		- Created an Iterator for this.
 - [x] Functions - to get energy from a chunk, to do thresholding
+- [x] All utility functions are in place.
 - [] Run the incoming blinks with these functions and output Blink or No Blink
 - [] Store incoming chunks as an array and delete eye blink chunks from the array.
 - [] Pass the resultant chunks array 
