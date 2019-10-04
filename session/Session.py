@@ -8,17 +8,17 @@ class User():
         The class to hold the data for a user.
     """
 
-    def __init__(self,username,user_path=None):
+    def __init__(self,user_name,user_path=None):
         """
-            Initialize username and path
+            Initialize user_name and path
         """
-        self.username = username
+        self.user_name = username
         self.user_path = user_path
         pass
 
-    def add_user_widget(self,widget):
+    def check_user_widget(self,widget):
         """
-            This module adds widget folder to the user's session.
+            This module checks if a widget exists in user's session
         """
         widget = widget.upper()
 
@@ -30,13 +30,17 @@ class User():
         if(widget in os.listdir(self.user_path)):
             return 1
 
-        # If that widget does not exist for that user, then create a new folder for that widget.
-        widget_path = self.user_path/widget
-        os.mkdir(widget_path)
-        widget = Widget(widget_path)
-
-        return widget
-
+    
+    def create_user_widget(self,widget):
+        if(check_user_widget(widget)):
+            print("CONSOLE: the widget {} already exists for user {}".format(widget.upper(),self.user_name))
+            return 0
+        
+        print("CONSOLE: The widget {} doesnot exist for user {}")
+        print("CONSOLE: Creating a new folder for user {} with for widget {}".format(self.user_name,widget))
+        widgetpath = self.user_path/widget
+        os.mkdir(widgetpath)
+        return widgetpath
 
 class Session():
     """
@@ -52,16 +56,16 @@ class Session():
         self.SESSION_PATH = settings.SESSION_PATH
         pass
 
-    def user_exists(self,username):
+    def user_exists(self,user_name):
         """
-            Check if the user with username exists. If true return 0, if user 
+            Check if the user with user_name exists. If true return 0, if user 
             does not exists return 1.
         """
         # Check if the user exists
         users = os.listdir(self.SESSION_PATH) 
 
         # If the user exists return 0
-        if(username in users):
+        if(user_name in users):
             return 0
         
         else:
@@ -69,14 +73,14 @@ class Session():
              
         pass
 
-    def create_user(self,username):
+    def create_user(self,user_name):
         """
-            Create a new session for user with username if it doesnot exist.
+            Create a new session for user with user_name if it doesnot exist.
         """
-        username = username.lower()
-        user_path = self.SESSION_PATH/username
+        user_name = username.lower()
+        user_path = self.SESSION_PATH/user_name
         os.mkdir(user_path)
-        user_object = User(username,user_path)
+        user_object = User(user_name,user_path)
         return user_object
          
         pass
