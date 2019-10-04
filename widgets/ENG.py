@@ -66,7 +66,7 @@ class ENG(Widget):
         
         
     def check_game_exists(self, game):
-        if(game in os.listdir(self.session_path)):
+        if(game not in os.listdir(self.session_path)):
             return 0
         
         return 1
@@ -75,7 +75,10 @@ class ENG(Widget):
         """
             This function will create a folder for that game if it doesnot exist
         """
-        print("CONSOLE: creating a folder for {game_name} in session {self.session_id}") 
+
+        # First check if the game exists or not
+        if not check_game_exists(game_name):
+            print("CONSOLE: creating a folder for {game_name} in session {self.session_id}") 
         game_path = self.session_id/game_name
         return game_path
 
@@ -85,7 +88,7 @@ class ENG(Widget):
             All the data for this session will be stored in this folder
         """
         session_id = sessionName
-        if(sessioName == None):W
+        if(sessioName == None):
             session_id = time.strftime("%d%m%y_%H%M%S")
         
         print("CONSOLE: Create a new session {}".format(session_id))
