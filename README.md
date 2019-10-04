@@ -26,10 +26,21 @@ This is the module which is responsible for creating different sessions for diff
 This is the module which holds all the Widgets that we will experiment on.
 
 # TODO 
+Do in remove_bad_epochs function
+- [] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
+- [] Then create new array = np.array(epochs-bad_epochs, channels, chunk_size)
+- [] Return this new array
+Later
+- [] Test this alongwith the real time implementation changes in ENG.py
+Later Later
+- [] Write proper code for attention_per_channel and attention_overall
+Later Later Later
+- [] Play game and plot the attention_matrix
+
 - [x] Split incoming data into overlapping blocks.
 		- Created an Iterator for this.
 - [x] Functions - to get energy from a chunk, to do thresholding
 - [x] All utility functions are in place.
-- [] Run the incoming blinks with these functions and output Blink or No Blink
-- [] Store incoming chunks as an array and delete eye blink chunks from the array.
+- [x] Run the incoming blinks with these functions and output Blink or No Blink
+- [x] Store incoming chunks as an array and delete eye blink chunks from the array.
 - [] Pass the resultant chunks array 
