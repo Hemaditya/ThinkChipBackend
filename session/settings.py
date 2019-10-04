@@ -8,3 +8,18 @@
     postprocessing.
 """
 EPOCHS = 0
+
+"""
+    Setting Path variables
+"""
+'The path to this Application settings is APP_PATH'
+import os
+from pathlib import Path
+APP_PATH = Path(os.environ['HOME'])/'.config'
+'Session data will be stored in the path SESSION_PATH'
+SESSION_PATH = APP_PATH/'SessionData'
+if(os.path.exists(SESSION_PATH) == False):
+    ' If the path to session data does not exist, the create it'
+    os.mkdir(SESSION_PATH)
+
+
