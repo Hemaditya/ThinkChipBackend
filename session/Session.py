@@ -12,7 +12,7 @@ class User():
         """
             Initialize user_name and path
         """
-        self.user_name = username
+        self.user_name = user_name
         self.user_path = user_path
         pass
 
@@ -21,7 +21,6 @@ class User():
             This module checks if a widget exists in user's session
         """
         widget = widget.upper()
-
         # Check if the widget is i use yet.
         if(widget not in config.WIDGETS.keys()):
             return 0
@@ -29,8 +28,17 @@ class User():
         # Check if the widget already exists for that user
         if(widget in os.listdir(self.user_path)):
             return 1
+        return 0
 
-    
+    def list_user_widgets(self):
+        """
+            List all the widgets this user has used
+        """
+        widgets = os.listdir(self.user_path)
+        if(len(widgets) == 0):
+            return None
+        return widgets
+
     def create_user_widget(self,widget):
         if(check_user_widget(widget)):
             print("CONSOLE: the widget {} already exists for user {}".format(widget.upper(),self.user_name))
@@ -65,7 +73,7 @@ class Session():
         users = os.listdir(self.SESSION_PATH) 
 
         # If the user exists return 0
-        if(user_name in users):
+        if(user_name not in users):
             return 0
         
         else:
@@ -77,7 +85,11 @@ class Session():
         """
             Create a new session for user with user_name if it doesnot exist.
         """
-        user_name = username.lower()
+        user_name = user_name.lower()
+        if(self.user_exists(user_name)):
+            print(f"CONSOLE: Cannot create the user with username {user_name} as it already exists")
+            return 0
+        print(f"CONSOLE: Create user with username {user_name}")
         user_path = self.SESSION_PATH/user_name
         os.mkdir(user_path)
         user_object = User(user_name,user_path)
@@ -85,3 +97,28 @@ class Session():
          
         pass
 
+    def delete_user(self,user_name):
+        """
+            Deletes the user and all his data
+        """
+        user_name = user_name.lower()
+        if(not self.user_exists(user_name)):
+            print(f"CONSOLE: Cannot delete the user with username {user_name} as does not exist")
+            return 0
+        
+        print(f"CONSOLE: Deleting user with username {user_name}")
+        os.rmdir(self.SESSION_PATH/user_name)
+
+    def get_user(self,user_name):
+        """
+            This function will return the user object.
+        """
+        user_name = user_name.lower()
+        user_path = self.SESSION_PATH/user_name
+        if(not self.user_exists(user_name)):
+            print(f"CONSOLE: Cannot retrieve the user as username {user_name} does not exist") 
+            return 0
+
+        user_object = User(user_name, user_path)
+        
+        return user_object
