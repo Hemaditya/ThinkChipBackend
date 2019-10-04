@@ -49,10 +49,22 @@ class ENG(Widget):
 
     def add_game(self,game_name):
         game_name = game_name.lower()
+        if game_name in self.games: 
+            print(f"CONSOLE: the game {game_name} already exists")
+            return 0
         self.games.append(game_name)
-        print("CONSOLE: adding game {game_name} to games")
+        print(f"CONSOLE: adding game {game_name} to games")
         np.save("games.npy",np.asarray(self.games))
 
+    def remove_game(self,game_name):
+        game_name = game_name.lower()
+        games = list(np.load('games.npy'))
+        if game_name not in games:
+            print(f"CONSOLE: no game found with name {game_name}")
+            return 0
+        games.remove(game_name) 
+        
+        
     def check_game_exists(self, game):
         if(game in os.listdir(self.session_path)):
             return 0
