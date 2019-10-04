@@ -30,5 +30,8 @@ class threshold():
 
 THRESHOLD = threshold()
 
-
-
+"""
+    These will be set of widgets that are available for user to test out
+"""
+WIDGETS = {}
+WIDGETS['ENG'] = {name:"ENG",desc:"User Engagement in games"}
