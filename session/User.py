@@ -2,6 +2,7 @@ from session import settings
 from widgets import Widget
 import config
 import os
+import shutil # to use rmtree
 
 class User():
     """
@@ -40,6 +41,9 @@ class User():
         return widgets
 
     def create_widget(self,widget_name):
+        """
+            Create a new folder for the user for that widget widget_name
+        """
         widget_name = widget_name.upper()
         if(widget_name.upper() not in config.WIDGETS.keys()):
             print(f"CONSOLE: the widget {widget_name} is not defined yet")
@@ -55,4 +59,34 @@ class User():
         os.mkdir(widget_path)
         widget_object = Widget(widget_name,widget_path)
         
+        return widget_object
+
+    def delete_widget(self,widget_name):
+        """
+            This function will delete a widget from the user.
+        """
+
+        widget_name = widget_name.upper()
+        if(widget_name not in os.listdir(self.user_path)):
+            print(f"CONSOLE: Cannot delete as the widget {widget_name} does not exist for user {self.user_name}")
+            return 0
+
+        shutil.rmtree(self.user_path/widget_name)
+        print(f"CONSOLE: Successfully deleted the data for the widget {widget_name} for user {self.user_name}")
+
+        return 1
+
+    def get_widget(self,widget_name):
+    """
+        Retrieve the widget and return its object if it exists for the user
+    """
+
+        widget_name = widget_name.upper()
+        if(widget_name not in os.listdir(self.user_path)):
+            print(f"CONSOLE: Cannot get the widget {widget_name} as it does not exist for user {self.user_name}")
+            return 0
+
+        widget_path = self.user_path/widget_path
+        widget_object = Widget(widget_name,widget_path)
+
         return widget_object
