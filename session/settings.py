@@ -22,4 +22,3 @@ if(os.path.exists(SESSION_PATH) == False):
     ' If the path to session data does not exist, the create it'
     os.mkdir(SESSION_PATH)
 
-
