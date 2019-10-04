@@ -16,7 +16,7 @@ class User():
         self.user_path = user_path
         pass
 
-    def check_user_widget(self,widget):
+    def check_widget(self,widget):
         """
             This module checks if a widget exists in user's session
         """
@@ -30,7 +30,7 @@ class User():
             return 1
         return 0
 
-    def list_user_widgets(self):
+    def list_widgets(self):
         """
             List all the widgets this user has used
         """
@@ -39,13 +39,20 @@ class User():
             return None
         return widgets
 
-    def create_user_widget(self,widget):
-        if(check_user_widget(widget)):
-            print("CONSOLE: the widget {} already exists for user {}".format(widget.upper(),self.user_name))
+    def create_widget(self,widget_name):
+        widget_name = widget_name.upper()
+        if(widget_name.upper() not in config.WIDGETS.keys()):
+            print(f"CONSOLE: the widget {widget_name} is not defined yet")
+            return 0
+
+        if(self.check_widget(widget_name)):
+            print("CONSOLE: the widget {} already exists for user {}".format(widget_name.upper(),self.user_name))
             return 0
         
-        print("CONSOLE: The widget {} doesnot exist for user {}")
-        print("CONSOLE: Creating a new folder for user {} with for widget {}".format(self.user_name,widget))
-        widgetpath = self.user_path/widget
-        os.mkdir(widgetpath)
-        return widgetpath
+        print(f"CONSOLE: The widget {widget_name} doesnot exist for user {self.user_name}")
+        print("CONSOLE: Creating a new folder for user {} with for widget {}".format(self.user_name,widget_name))
+        widget_path = self.user_path/widget_name
+        os.mkdir(widget_path)
+        widget_object = Widget(widget_name,widget_path)
+        
+        return widget_object

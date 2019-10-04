@@ -1,4 +1,5 @@
 from session import settings
+import shutil
 from session import User
 from widgets import Widget
 import config
@@ -43,7 +44,7 @@ class Session():
         if(self.user_exists(user_name)):
             print(f"CONSOLE: Cannot create the user with username {user_name} as it already exists")
             return 0
-        print(f"CONSOLE: Create user with username {user_name}")
+        print(f"CONSOLE: Created user with username {user_name}")
         user_path = self.SESSION_PATH/user_name
         os.mkdir(user_path)
         user_object = User(user_name,user_path)
@@ -61,7 +62,7 @@ class Session():
             return 0
         
         print(f"CONSOLE: Deleting user with username {user_name}")
-        os.rmdir(self.SESSION_PATH/user_name)
+        shutil.rmtree(self.SESSION_PATH/user_name)
 
     def get_user(self,user_name):
         """
