@@ -1,7 +1,6 @@
 from session import settings
 import shutil
 from session import User
-from widgets import Widget
 import config
 import os
 

@@ -1,13 +1,17 @@
 '''
     The widget to measure user engagement
 '''
-from widgets import *
+
 import time
 import numpy as np
 import threading
 import filters as f
 import pickle
 import config
+from widgets import Widget
+
+# Make sure the global config file knows about this widget
+
 
 class Game():
     """
@@ -105,14 +109,17 @@ class ENG(Widget):
         """
         # Check if the game exists if not, then create a new game
         game_path = self.session_path/game_name
-        if not check_game_exists(game_name):
+        if not self.check_game_exists(game_name):
             game_path = self.create_game_session(game_name)
         
         game_object = Game(game_name,game_path)
         
+        data = np.zeros((1,config.CHUNK_SIZE,config.CHANNELS))
         for i in range(int(trails/5)):
             # Read 5 chunks at once and save the data
-            data = self.data_reader.read_chunk(5)
-            x = threading.Thread(target=game_object.save_data,args=(data,))
+            data = np.vstack((data,self.data_reader.read_chunk(5)))
+            x = threading.Thread(target=game_object.save_data,args=(data[1:],))
             x.start()
+
+config.WIDGETS["ENG"] = {"class":ENG, "desc":"Unsterdant user engagement for different games"}
 

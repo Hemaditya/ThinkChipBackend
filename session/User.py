@@ -77,16 +77,16 @@ class User():
         return 1
 
     def get_widget(self,widget_name):
-    """
-        Retrieve the widget and return its object if it exists for the user
-    """
+        """
+            Retrieve the widget and return its object if it exists for the user
+        """
 
         widget_name = widget_name.upper()
         if(widget_name not in os.listdir(self.user_path)):
             print(f"CONSOLE: Cannot get the widget {widget_name} as it does not exist for user {self.user_name}")
             return 0
 
-        widget_path = self.user_path/widget_path
+        widget_path = self.user_path/widget_name
         widget_object = Widget(widget_name,widget_path)
 
         return widget_object
