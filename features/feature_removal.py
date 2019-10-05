@@ -3,6 +3,7 @@
 """
 import numpy as np
 import config
+import utils
 from utils import Iterator
 
 def energy_of_epoch(data):
@@ -46,10 +47,10 @@ def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
     dataIterator = []
     for c in channels:
         if(sliding_window == True):
-            dataIterator.append(utils.Iterator(data[c]))
+            dataIterator.append(utils.iterator.getIterator(data[c]))
         else:
             dataIterator.append(data[c])
-
+    dataIterator = np.asarray(dataIterator)
     bad_epochs = []
     for c in channels:
         for D in dataIterator[c]:
@@ -58,16 +59,14 @@ def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
                     bad_epochs.append(i)
 
 
+    # Reshape it back to epochs,channels,chunk_size
+    dataIterator = dataIterator.transpose(1,0,2) 
     # Remove duplicate epochs
     bad_epochs = np.array(list(set(bad_epochs)))
-    # if(sliding_window == True):
-    #     # Generate indices for bad_epochs in oldData
-    #     bad_epochs = bad_epochs*dataIterator[0].hop
-    #     bad_epochs = np.floor(bad_epochs/dataIterator[0].chunk_size)
-    # data = np.delete(oldData,bad_epochs,axis=0)
 
-    ## Make a method in Iterator class which gives array (epochs, channels, chunk_size)
-    ## Then create new array = np.array(epochs-bad_epochs, channels, chunk_size)
-    ## Return this new array
+
+    # Now delete these bad epochs
+    data = np.delete(dataIterator, bad_epochs, axis=0)
+    
 
     return data
