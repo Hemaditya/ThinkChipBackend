@@ -27,7 +27,7 @@ This is the module which holds all the Widgets that we will experiment on.
 
 # TODO 
 Do in remove_bad_epochs function
-- [] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
+- [x] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
 - [] Then create new array = np.array(epochs-bad_epochs, channels, chunk_size)
 - [] Return this new array
 Later
