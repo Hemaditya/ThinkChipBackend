@@ -9,9 +9,8 @@ import filters as f
 import pickle
 import config
 from widgets import Widget
-
 # Make sure the global config file knows about this widget
-
+import features as ft
 
 class Game():
     """
@@ -36,24 +35,28 @@ class Game():
 
 class ENG(Widget):
     """
-        
+
     """
 
     def __init__(self,widget_name, widget_path, sessionName=None, offline=False):
         """
             Initialize a new widget object and create its path and other stuff
         """
-        super().__init__(self.widget_name,self.widget_path) 
+        super().__init__(self.widget_name,self.widget_path)
         self.session_id, self.session_path = self.create_session(sessionName)
         self.games = list(np.load("games.npy"))
 
-        # Initialize the data reader for realtime data processing 
+        # Initialize the data reader for realtime data processing
         if(offline == False):
             self.data_reader = config.data_reader
 
+        self.attention_matrix = []
+
+        self.channel_mask = [0]
+
     def add_game(self,game_name):
         game_name = game_name.lower()
-        if game_name in self.games: 
+        if game_name in self.games:
             print(f"CONSOLE: the game {game_name} already exists")
             return 0
         self.games.append(game_name)
@@ -66,13 +69,13 @@ class ENG(Widget):
         if game_name not in games:
             print(f"CONSOLE: no game found with name {game_name}")
             return 0
-        games.remove(game_name) 
-        
-        
+        games.remove(game_name)
+
+
     def check_game_exists(self, game):
         if(game not in os.listdir(self.session_path)):
             return 0
-        
+
         return 1
 
     def create_game_session(self,game_name):
@@ -82,7 +85,7 @@ class ENG(Widget):
 
         # First check if the game exists or not
         if not check_game_exists(game_name):
-            print("CONSOLE: creating a folder for {game_name} in session {self.session_id}") 
+            print("CONSOLE: creating a folder for {game_name} in session {self.session_id}")
         game_path = self.session_id/game_name
         return game_path
 
@@ -94,7 +97,7 @@ class ENG(Widget):
         session_id = sessionName
         if(sessioName == None):
             session_id = time.strftime("%d%m%y_%H%M%S")
-        
+
         print("CONSOLE: Create a new session {}".format(session_id))
         session_path = self.widget_path/session_id
         os.mkdir(session_path)
@@ -111,15 +114,49 @@ class ENG(Widget):
         game_path = self.session_path/game_name
         if not self.check_game_exists(game_name):
             game_path = self.create_game_session(game_name)
-        
+
         game_object = Game(game_name,game_path)
-        
         data = np.zeros((1,config.CHUNK_SIZE,config.CHANNELS))
         for i in range(int(trails/5)):
             # Read 5 chunks at once and save the data
             data = np.vstack((data,self.data_reader.read_chunk(5)))
             x = threading.Thread(target=game_object.save_data,args=(data[1:],))
             x.start()
+    
+    def attention_per_channel(self, bandpower):
+        """bandpower - numpy array of length 5"""
+        # Do something to return attention given bandpower for
+        # a single channel for a single epoch
 
+        # temporary fix change this appropriately
+        return bandpower[3]/np.mean(bandpower)
+
+    def attention_overall(self, attention_per_channel):
+        """attention_per_channel - np.array(num_of_channels)"""
+        # Do something to generate
+        # self.attention
+        return np.mean(attention_per_channel)
+
+    def test_start_session(self, game_name, channels=[0]):
+        """channels: list of channels to use"""
+        while True:
+            temp_data = self.data_reader.read_chunk(10)
+            t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
+            t.start()
+
+    def get_attention(self, temp_data, channel_mask=[0]):
+        """temp_data: np.array(epochs, channels, chunk_size)"""
+        # Remove bad blocks
+        blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
+                                           channels=channel_mask, sliding_window=True)
+
+        blocks_bandpower = ft.get_bandpower(blocks_data, channel_mask)
+
+        attention_per_channel = np.zeros((blocks_bandpower.shape[0], len(channel_mask)))
+        for idx, block in enumerate(blocks_bandpower):
+            for channel in channel_mask:
+                attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
+            attention_per_epoch = self.attention_overall(attention_per_channel[idx])
+
+        self.attention_matrix.append(attention_per_epoch)
 config.WIDGETS["ENG"] = {"class":ENG, "desc":"Unsterdant user engagement for different games"}
-
