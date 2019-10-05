@@ -46,3 +46,20 @@ class Iterator():
             return nextData
 
         raise StopIteration
+
+
+def getIterator(data, chunk_size=250,hop=125,window=True):
+    """
+        This function takes a data with shape(epochs, channels, chunk_size) and
+        returns a new data with how it should iterate.W
+
+        output:
+            data with epochs which the iterator has gives out.
+    """
+    iterator = Iterator(data,chunk_size,hop,window)
+    data = []
+    for i in iterator:
+        data.append(i)
+
+    data = np.asarray(data)
+    return data
