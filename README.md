@@ -1,6 +1,6 @@
 # ThinkChipBackend
 
-This will be the backend Engine for all the widgets we will be building. 
+This will be the backend Engine for all the widgets we will be building.
 We will seperate different modules and keep them seperately.
 
 ## [MODULE] - test
@@ -10,7 +10,7 @@ This module has jupyter notebooks which are used to test different modules.
 This is the module which will hold all the filters that are applied to the raw signal as a processing step.
 
 ## [MODULE] - core
-This is the module which will hold the code which is responsible to read the data from the device and stream it to 
+This is the module which will hold the code which is responsible to read the data from the device and stream it to
 either a port or a socket.
 
 ## [MOUDLE] - features
@@ -25,13 +25,16 @@ This is the module which is responsible for creating different sessions for diff
 ## [MODULE] - widgets
 This is the module which holds all the Widgets that we will experiment on.
 
-# TODO 
+# TODO
 Do in remove_bad_epochs function
-- [] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
-- [] Then create new array = np.array(epochs-bad_epochs, channels, chunk_size)
-- [] Return this new array
+- [x] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
+- [x] Then create np.array(epochs - bad_epochs, channels, chunk_size)
+- [x] Return this new array
 Later
 - [] Test this alongwith the real time implementation changes in ENG.py
+- - [] Write a test_main.py file that initializes ENG.py from the main directory.
+  - [] Plot the attention matrix when the session ends.
+  - [] Save the attention matrix alongwith filtered data in some test_data folder.
 Later Later
 - [] Write proper code for attention_per_channel and attention_overall
 Later Later Later
@@ -43,4 +46,4 @@ Later Later Later
 - [x] All utility functions are in place.
 - [x] Run the incoming blinks with these functions and output Blink or No Blink
 - [x] Store incoming chunks as an array and delete eye blink chunks from the array.
-- [] Pass the resultant chunks array 
+- [] Pass the resultant chunks array

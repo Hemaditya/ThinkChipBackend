@@ -168,6 +168,8 @@ class ENG(Widget):
                 attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
             attention_per_epoch = self.attention_overall(attention_per_channel[idx])
             self.attention_matrix.append(attention_per_epoch)
+
+            # For testing. Remove later
             print(attention_per_epoch)
 
 config.WIDGETS["ENG"] = {"class":ENG, "desc":"Unsterdant user engagement for different games"}

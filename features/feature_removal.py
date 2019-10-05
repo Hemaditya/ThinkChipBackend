@@ -3,6 +3,7 @@
 """
 import numpy as np
 import config
+import sys
 import utils
 from utils import Iterator
 
@@ -44,6 +45,7 @@ def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
     data = data.transpose(1,0,2)
     data = data.reshape(data.shape[0],-1)
 
+    # Puts each channel as a numpy array in the list
     dataIterator = []
     for c in channels:
         if(sliding_window == True):
@@ -51,22 +53,22 @@ def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
         else:
             dataIterator.append(data[c])
     dataIterator = np.asarray(dataIterator)
+
+    # Iterate over each block in each channel and find bad blocks
+    # corresponding to blinks as blocks with energy above the threshold.
     bad_epochs = []
     for c in channels:
-        for D in dataIterator[c]:
-            for i,d in enumerate(D):
-                if(energy_of_epoch(d) >= threshold):
-                    bad_epochs.append(i)
-
+        for index, block in enumerate(dataIterator[c]):
+            if(energy_of_epoch(block) >= threshold):
+                bad_epochs.append(index)
 
     # Reshape it back to epochs,channels,chunk_size
-    dataIterator = dataIterator.transpose(1,0,2) 
+    # so that epochs are in 0th axis to remove bad epochs.
+    dataIterator = dataIterator.transpose(1,0,2)
     # Remove duplicate epochs
     bad_epochs = np.array(list(set(bad_epochs)))
 
-
     # Now delete these bad epochs
     data = np.delete(dataIterator, bad_epochs, axis=0)
-    
 
     return data
