@@ -34,3 +34,6 @@ THRESHOLD = threshold()
     These will be set of widgets that are available for user to test out
 """
 WIDGETS = {}
+
+""" This file will hold the reader or streamer for the data"""
+data_reader = None
