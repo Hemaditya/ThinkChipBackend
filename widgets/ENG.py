@@ -122,7 +122,7 @@ class ENG(Widget):
             data = np.vstack((data,self.data_reader.read_chunk(5)))
             x = threading.Thread(target=game_object.save_data,args=(data[1:],))
             x.start()
-    
+
     def attention_per_channel(self, bandpower):
         """bandpower - numpy array of length 5"""
         # Do something to return attention given bandpower for
@@ -137,15 +137,25 @@ class ENG(Widget):
         # self.attention
         return np.mean(attention_per_channel)
 
-    def test_start_session(self, game_name, channels=[0]):
-        """channels: list of channels to use"""
+    def test_start_session(self, game_name, channels=[0], read_length=10):
+        """This function starts the widget and calls the functions to get data from cyton board
+        using self.data_reader. Length of data section (temp_data) that is read at a single time
+        is determined by read_length. This data section (temp_data) is passed to get_attention
+        (in a different thread) which calculates the attention matrix for this data.
+        channels: list of channels to use"""
         while True:
-            temp_data = self.data_reader.read_chunk(10)
+            temp_data = self.data_reader.read_chunk(read_length)
+
+            # Thread because the below has too many loops
+            # We don't have to drop data, as data will get dropped if
+            # data_reader.read_chunk cannot be called for too long.
             t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
             t.start()
 
     def get_attention(self, temp_data, channel_mask=[0]):
-        """temp_data: np.array(epochs, channels, chunk_size)"""
+        """This function gets the attention matrix from a section of data.
+        length of this data section is determined by read_length.
+        temp_data: np.array(epochs, channels, chunk_size)"""
         # Remove bad blocks
         blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
                                            channels=channel_mask, sliding_window=True)
@@ -157,6 +167,7 @@ class ENG(Widget):
             for channel in channel_mask:
                 attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
             attention_per_epoch = self.attention_overall(attention_per_channel[idx])
+            self.attention_matrix.append(attention_per_epoch)
+            print(attention_per_epoch)
 
-        self.attention_matrix.append(attention_per_epoch)
 config.WIDGETS["ENG"] = {"class":ENG, "desc":"Unsterdant user engagement for different games"}
