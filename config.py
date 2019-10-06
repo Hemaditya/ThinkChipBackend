@@ -4,6 +4,7 @@
     modules are also allowed to change the default settings
 """
 import os
+import core
 
 
 # Create this as the root directory and add it to your path
@@ -36,4 +37,4 @@ THRESHOLD = threshold()
 WIDGETS = {}
 
 """ This file will hold the reader or streamer for the data"""
-data_reader = None
+data_reader = core.cyton.dataReader()

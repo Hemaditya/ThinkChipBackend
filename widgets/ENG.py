@@ -29,10 +29,12 @@ class Game():
         """
             Just save the data to a location
         """
+        import filters as f
         print({"CONSOLE: Filtering the data"})
         data = f.apply_dc_offset(data)
         data = f.apply_notch_filter(data)
-        with open(self.game_path/"filtered_data.pickle", 'wb') as f:
+        print(f"CONSOLE: Saving the data")
+        with open(self.game_path/"filtered_data.pickle", 'wb+') as f:
             pickle.dump(data,f)
 
 # ENG class
@@ -79,8 +81,10 @@ class ENG(Widget):
 
     def check_game_exists(self, game):
         if(game not in os.listdir(self.session_path)):
+            print("CONSOLE: game {game_name} does not exists")
             return 0
-
+            
+        print("CONSOLE: game {game_name} not exists")
         return 1
 
     def create_game_session(self,game_name):
@@ -89,11 +93,14 @@ class ENG(Widget):
         """
 
         # First check if the game exists or not
+        game_path = self.session_path/pathlib.Path(game_name)
+        print(f"CONSOLE:{self.session_id}")
         if not self.check_game_exists(game_name):
             print("CONSOLE: creating a folder for {game_name} in session {self.session_id}")
+            os.mkdir(game_path)
 
 
-        game_path = self.session_id/pathlib.Path(game_name)
+        print("CONSOLE: the game {game_name} already exists in the session")
         return game_path
 
     def create_session(self,sessionName=None):
@@ -109,7 +116,7 @@ class ENG(Widget):
         os.mkdir(session_path)
         return session_id, session_path
 
-    def start_session(self,game_name="test", trails=120):
+    def start_session(self,game_name="test", trails=20):
         """
             In this function, this widget is supposed to start reading data and keep saving it
             in its session folder every 10 seconds.
@@ -119,12 +126,13 @@ class ENG(Widget):
         game_path = self.session_path/pathlib.Path(game_name)
         if not self.check_game_exists(game_name):
             game_path = self.create_game_session(game_name)
+            pass
 
         game_object = Game(game_name,game_path)
         data = np.zeros((1,config.CHUNK_SIZE,config.CHANNELS))
-        for i in range(int(trails/5)):
+        for i in range(int(trails/10)):
             # Read 5 chunks at once and save the data
-            data = np.vstack((data,self.data_reader.read_chunk(5)))
+            data = np.vstack((data,self.data_reader.read_chunk(10)))
             x = threading.Thread(target=game_object.save_data,args=(data[1:],))
             x.start()
 
@@ -134,7 +142,7 @@ class ENG(Widget):
         # a single channel for a single epoch
 
         # temporary fix change this appropriately
-        return bandpower[3]/np.mean(bandpower)
+        return np.mean(bandpower)
 
     def attention_overall(self, attention_per_channel):
         """attention_per_channel - np.array(num_of_channels)"""
@@ -162,19 +170,20 @@ class ENG(Widget):
         length of this data section is determined by read_length.
         temp_data: np.array(epochs, channels, chunk_size)"""
         # Remove bad blocks
-        blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
-                                           channels=channel_mask, sliding_window=True)
+        #blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
+                                           #channels=channel_mask, sliding_window=True)
 
-        blocks_bandpower = ft.get_bandpower(blocks_data, channel_mask)
+        blocks_bandpower = ft.get_bandpower(temp_data, channel_mask)
+        print(f"CONSOLE: bandpower Theta: {blocks_bandpower[1]}")
+        #attention_per_channel = np.zeros((blocks_bandpower.shape[0], len(channel_mask)))
+        #for idx, block in enumerate(blocks_bandpower):
+        #    for channel in channel_mask:
+        #        attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
+        #    attention_per_epoch = self.attention_overall(attention_per_channel[idx])
+        #    self.attention_matrix.append(attention_per_epoch)
 
-        attention_per_channel = np.zeros((blocks_bandpower.shape[0], len(channel_mask)))
-        for idx, block in enumerate(blocks_bandpower):
-            for channel in channel_mask:
-                attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
-            attention_per_epoch = self.attention_overall(attention_per_channel[idx])
-            self.attention_matrix.append(attention_per_epoch)
+        #    # For testing. Remove later
+        #    print(f"CONSOLE: Attention per epoch: {attention_per_epoch}")
 
-            # For testing. Remove later
-            print(attention_per_epoch)
 
 config.WIDGETS["ENG"] = {"class":ENG, "desc":"Unsterdant user engagement for different games"}
