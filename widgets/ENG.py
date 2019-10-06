@@ -174,7 +174,7 @@ class ENG(Widget):
                                            #channels=channel_mask, sliding_window=True)
 
         blocks_bandpower = ft.get_bandpower(temp_data, channel_mask)
-        print(f"CONSOLE: bandpower Theta: {blocks_bandpower[1]}")
+        print(f"CONSOLE: bandpower Theta: {blocks_bandpower[:,1]}")
         #attention_per_channel = np.zeros((blocks_bandpower.shape[0], len(channel_mask)))
         #for idx, block in enumerate(blocks_bandpower):
         #    for channel in channel_mask:
