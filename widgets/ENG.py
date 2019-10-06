@@ -170,11 +170,13 @@ class ENG(Widget):
         length of this data section is determined by read_length.
         temp_data: np.array(epochs, channels, chunk_size)"""
         # Remove bad blocks
-        #blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
-                                           #channels=channel_mask, sliding_window=True)
-
+        data = temp_data
+        data = f.apply_dc_offset(data)
+        data = f.apply_notch_filter(data)
+        temp_data = ft.remove_bad_epochs(data, threshold=400,channels=channel_mask, sliding_window=True)
+        #print(f"CONSOLE: temp data: {temp_data}")
         blocks_bandpower = ft.get_bandpower(temp_data, channel_mask)
-        print(f"CONSOLE: bandpower Theta: {blocks_bandpower[:,1]}")
+        print(f"CONSOLE: bandpower Theta: {blocks_bandpower.mean(axis=0)}")
         #attention_per_channel = np.zeros((blocks_bandpower.shape[0], len(channel_mask)))
         #for idx, block in enumerate(blocks_bandpower):
         #    for channel in channel_mask:

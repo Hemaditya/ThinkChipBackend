@@ -37,4 +37,5 @@ THRESHOLD = threshold()
 WIDGETS = {}
 
 """ This file will hold the reader or streamer for the data"""
-data_reader = core.cyton.dataReader()
+#data_reader = core.cyton.dataReader()
+data_reader = core.app.OpenBCI()
