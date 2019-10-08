@@ -19,7 +19,7 @@ def load_data(username):
                 - Keys are the widget names and values are the contents of the widget
 
     '''
-    path = pathlib.Path(config.SESSION_DIR)
+    path = config.SESSION_DIR
     username = username.lower()
     path = path/username
     if not os.path.isdir(username):
