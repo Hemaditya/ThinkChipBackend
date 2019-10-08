@@ -5,10 +5,13 @@
 """
 import os
 import core
+import pathlib
 
 
 # Create this as the root directory and add it to your path
-ROOT_DIR = os.path.dirname(__file__)
+ROOT_DIR = pathlib.Path(os.path.dirname(__file__))
+# The directory where session data will be stored
+SESSION_DIR = pathlib.Path(os.path.dirname(__file__))/'Session'
 
 # CHUNK_SIZE defines the size of each epoch in the data
 CHUNK_SIZE = 250
