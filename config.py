@@ -57,3 +57,15 @@ WIDGETS = {}
 #data_reader = core.cyton.dataReader()
 #data_reader = core.app.OpenBCI()
 data_reader = None
+
+# These are the settings for filters
+filter_states = {}
+def reset_filter_states():
+    global filter_states
+    filter_states['dc'] = {}
+    filter_states['notch'] = {}
+    filter_states['bandpass'] = {}
+    for i in range(CHANNELS):
+        filter_states['dc'][i] = [0,0]
+        filter_states['notch'][i] = [0,0,0,0,0,0]
+        filter_states['bandpass'][i] = [0,0,0,0,0,0]
