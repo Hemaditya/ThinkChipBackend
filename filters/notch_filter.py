@@ -60,8 +60,7 @@ def apply_notch_filter(data):
     filteredData = np.zeros(shape=data.shape)
 
     for c in range(data.shape[1]):
-        state = [0,0,0,0,0,0]
         for e in range(data.shape[0]):
-            filteredData[e,c], state = notch_filter(data[e,c,:].reshape(-1),state)
+            filteredData[e,c], config.filter_states['notch'][c] = notch_filter(data[e,c,:].reshape(-1),config.filter_states['notch'][c])
     
     return filteredData
