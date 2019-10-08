@@ -44,7 +44,7 @@ def create_user(username):
     if user_path != 0:
         print(f"CONSOLE: Cannot create the folder for {username} as it already exists")
         return 0
-    user_path = config.SESSION_PATH/username 
+    user_path = config.SESSION_PATH/username.lower() 
     os.mkdir(user_path)
     print(f"CONSOLE: The folder for {username} created successfully.")
     return user_path
@@ -132,11 +132,13 @@ def add_widget(user, widget):
 
     """
 
-    widget_path = check_widget(user,widget)
+    user_path = check_user(user)
+    widget_path = check_widget(user_path,widget)
     if widget_path != 0:
         print(f"CONSOLE: Cannot create the widget {widget} as the widget already exists") 
         return 0
 
+    widget_path = user_path/widget.lower()
     os.mkdir(widget_path)
     print(f"CONSOLE: Widget {widget} successfully created.") 
 
