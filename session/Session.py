@@ -115,7 +115,7 @@ def delete_widget(user,widget):
     """
     widget_path = check_widget(user,widget)
     if widget_path == 0:
-        print(f"CONSOLE: Cannot delete the widget {widget}") 
+        print(f"CONSOLE: Cannot delete the widget {widget} as it does not exist.") 
         return 0
 
     shutil.rmtree(widget_path)
@@ -133,6 +133,9 @@ def add_widget(user, widget):
     """
 
     user_path = check_user(user)
+    if user_path == 0:
+        print(f"CONSOLE: Cannot create the widget {widget} as the user does not exists") 
+        return 0
     widget_path = check_widget(user_path,widget)
     if widget_path != 0:
         print(f"CONSOLE: Cannot create the widget {widget} as the widget already exists") 
