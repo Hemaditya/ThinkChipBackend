@@ -40,7 +40,7 @@ class ENG():
             data = filters.apply_notch_filter(data)
 
         self.data_buffer = np.vstack((self.data_buffer,data))
-        file_name = flag+game+self.t+".pickle"
+        file_name = flag+game+_self.t+".pickle"
         file_path = self.path/file_name
         if verbose:
             print(f"CONSOLE: Saving data")
