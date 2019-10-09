@@ -27,6 +27,8 @@ class ENG():
             Inputs:
                 data: np.ndarray
                 - the data that you wanna save.
+                game: string
+                - Name of the game
                 f: int
                 - 1 if you want to filter the data
                 - 0 if you want to save raw data
