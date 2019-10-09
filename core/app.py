@@ -40,7 +40,7 @@ class OpenBCI(object):
 		if(os.path.isdir(self.currentSession) == False):
 			os.mkdir(self.currentSession)
 	
-	def read_chunk(self,n_chunks=1,data_only=True,exit_after=False,save_data=False):
+	def read_chunk(self,n_chunks=1,verbose=False,data_only=True,exit_after=False,save_data=False):
 		'''
 			- Each chunk is defined by "chunk_size".
 			- "n_chunks" defines how many chunks of data you want.
@@ -60,7 +60,8 @@ class OpenBCI(object):
 			t = 0
 			data = np.zeros(shape=(1,self.chunk_size,8))
 			for i in range(n_chunks):
-				print("Reading Chunk: %d "%(i+1))
+                                if verbose:
+                                    print("Reading Chunk: %d "%(i+1))
 				sample = self.streamer.start_stream_ext(method=self.method,chunk_size=self.chunk_size,data_only=data_only)
 				sample = np.expand_dims(np.asarray(sample),0)
 				data = np.append(data,sample,0)
