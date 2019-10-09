@@ -10,13 +10,14 @@ from pathlib import Path
 class EyeBlink():
 	''' Module to detect/read data for Eye Blinks '''
 
-	def __init__(self,widget_path,trails=120):
+	def __init__(self,widget_path,name="Blinks",trails=120):
 		''' Initialize stuff '''
 		self.path = widget_path
+		self.name = name
 		if type(widget_path) == str:
 			self.path = Path(self.path)
 		self.trails = trails
-		self.name = 'EyeBlinks'
+		self.name = name
 		self.t = time.strftime("%d%m%y_%H%M%S")
 		self.data_buffer = np.zeros(shape=(1,config.CHANNELS,config.CHUNK_SIZE))
 
@@ -42,7 +43,7 @@ class EyeBlink():
 		file_name = flag+self.name+self.t+".pickle"
 		file_path = self.path/file_name
 		if verbose:
-			print(f"CONSOLE: Saving data")
+			print(f"CONSOLE: Saving data{self.data_buffer[1:].shape}")
 		with open(file_path,'wb+') as f:
 			pickle.dump(self.data_buffer[1:],f)
 
@@ -74,13 +75,16 @@ class EyeBlink():
 			t.start()
 
 	
-	def collect(self):
+	def collect(self,verbose=False):
 		self.t = time.strftime("%d%m%y_%H%M%S")
 		config.reset_filter_states()
-		for i in range(int(self.trails/5)):
-			data = config.data_reader.read_chunk(n_chunks=5)
-			t = threading.Thread(target=self.save_data,args=(data,1,True))
+		for i in range(int(self.trails/4)):
+			print("Blink: ",i)
+			data = config.data_reader.read_chunk(n_chunks=4)
+			t = threading.Thread(target=self.save_data,args=(data,1,verbose))
 			t.start()
+
+		print("Data Collection finished")
 
 			
 
