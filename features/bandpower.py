@@ -68,7 +68,7 @@ def get_bandpower(data, channels=[0]):
                 - All the channels for which you want the bandpower.
 
         Outputs:
-            bandPower {type:np.ndarray,shape:(epochs,channels,5)}
+            bandPower {type:np.ndarray,shape:(channels,5)}
                 - Bandpower of all the channels for all the epochs
 
     """
