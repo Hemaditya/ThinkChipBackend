@@ -7,6 +7,8 @@ import config
 import pickle
 import numpy as np
 import threading
+import features as ft
+
 
 class ENG():
     ''' The base class for ENG module '''
@@ -20,6 +22,8 @@ class ENG():
         # This is the defult and can be reset
         self.trails = trails
         self.games = np.load(config.ROOT_DIR/'widgets/games.npy')
+
+        self.attention_matrix = []
 
     def save_data(self,data,game,f=0,verbose=False):
         ''' This function is called whenever you want to save the data '''
@@ -70,7 +74,7 @@ class ENG():
         (in a different thread) which calculates the attention matrix for this data.
         channels: list of channels to use"""
         while True:
-            temp_data = self.data_reader.read_chunk(read_length)
+            temp_data = config.data_reader.read_chunk(read_length)
 
             # Thread because the below has too many loops
             # We don't have to drop data, as data will get dropped if
@@ -78,12 +82,12 @@ class ENG():
             t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
             t.start()
 
-    def get_attention(self, temp_data, channel_mask=[0]):
+    def get_attention(self, temp_data, channel_mask=[0], threshold=10):
         """This function gets the attention matrix from a section of data.
         length of this data section is determined by read_length.
         temp_data: np.array(epochs, channels, chunk_size)"""
         # Remove bad blocks
-        blocks_data = ft.remove_bad_epochs(temp_data, threshold=100,
+        blocks_data = ft.remove_bad_epochs(temp_data, threshold=threshold,
                                            channels=channel_mask, sliding_window=True)
 
         blocks_bandpower = []
