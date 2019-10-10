@@ -50,7 +50,7 @@ while True:
                     print("The number of trails should be in the count of 10")
                     continue
                 eng = ENG(widget_path,inp)
-                eng.run()
+                eng.test_()
 
             elif(inp == 2):
                 break
