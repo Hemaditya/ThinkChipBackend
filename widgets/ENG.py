@@ -42,7 +42,7 @@ class ENG():
             data = filters.apply_notch_filter(data)
 
         self.data_buffer = np.vstack((self.data_buffer,data))
-        file_name = flag+game+_self.t+".pickle"
+        file_name = flag+game+"|"+self.t+".pickle"
         file_path = self.path/file_name
         if verbose:
             print(f"CONSOLE: Saving data")
@@ -59,8 +59,41 @@ class ENG():
         while x != 'q':
             for i,g in enumerate(self.games):
                 print(i+1,".",g)
-            print("Press q to exit ")
+            print("Press q to go back ")
             x = input("Enter the game you wanna play: ")
+            if x == 'q':
+                return
+            if x != 'q':
+                x = int(x) - 1 
+                if(x < 0 or x >= self.games.shape[0]):
+                    print(f"CONSOLE: Enter proper varible") 
+                    continue
+                self.t = time.strftime("%d%m%y_%H%M%S")
+                for i in range(int(self.trails/5)):
+                    print(f"CONSOLE: {int(self.trails/5)-i} trails left")
+                    data = config.data_reader.read_chunk(5)
+                    t = threading.Thread(target=self.save_data, args=(data,self.games[x],1))
+                    t.start()
+        file_path = self.path/file_name
+        if verbose:
+            print(f"CONSOLE: Saving data")
+        with open(file_path,'wb+') as f:
+            pickle.dump(self.data_buffer[1:],f)
+
+    def run(self):
+        ''' This function will be called whenever you want to start the widget '''
+
+        # First reset the states variables
+        config.reset_filter_states()
+        
+        x = 0
+        while x != 'q':
+            for i,g in enumerate(self.games):
+                print(i+1,".",g)
+            print("Press q to go back ")
+            x = input("Enter the game you wanna play: ")
+            if x == 'q':
+                return
             if x != 'q':
                 x = int(x) - 1 
                 if(x < 0 or x >= self.games.shape[0]):

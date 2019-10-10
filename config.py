@@ -54,10 +54,10 @@ WIDGETS = {}
 
 """ This file will hold the reader or streamer for the data"""
 
-#from core.cyton import dataReader
-#data_reader = dataReader()
-from core.app import OpenBCI
-data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
+from core.cyton import dataReader
+data_reader = dataReader()
+#from core.app import OpenBCI
+#data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
 #data_reader = None
 
 
