@@ -21,9 +21,10 @@ def energy_of_epoch(data):
 
     energy = np.square(data)
     energy = np.mean(energy)
-    return energy
+    print(f"CONSOLE: ENEGERGY: {energy}")
+    return abs(energy)
 
-def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
+def remove_bad_epochs(data,threshold=100, channels=[0],sliding_window=True):
     """
         Inputs:
             data:{type:np.ndarray, shape:(epochs,config.CHANNELS,config.CHUNK_SIZE)}
@@ -67,8 +68,9 @@ def remove_bad_epochs(data,threshold=None, channels=[0],sliding_window=True):
     dataIterator = dataIterator.transpose(1,0,2)
     # Remove duplicate epochs
     bad_epochs = np.array(list(set(bad_epochs)))
-
+    print(bad_epochs)
     # Now delete these bad epochs
     data = np.delete(dataIterator, bad_epochs, axis=0)
+    print(f"CONSOLE: deleted bad epochs, new data shape: {data.shape}")
 
     return data

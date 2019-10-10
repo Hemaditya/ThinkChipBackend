@@ -54,9 +54,8 @@ def apply_dc_offset(data):
     offsetData = np.zeros(shape=data.shape)
 
     for c in range(data.shape[1]):
-        state = [0,0]
         for e in range(data.shape[0]):
-            offsetData[e,c], state = dc_offset(data[e,c,:].reshape(-1),state)
+            offsetData[e,c], config.filter_states['dc'][c] = dc_offset(data[e,c,:].reshape(-1),config.filter_states['dc'][c])
     
     return offsetData
 

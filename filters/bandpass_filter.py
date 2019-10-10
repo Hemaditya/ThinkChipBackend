@@ -37,7 +37,7 @@ def bandpass(data,state,bp):
     bandpassOutput, state = signal.lfilter(b, a, data, zi=state)
     return bandpassOutput, state
 
-def apply_bandpass_filter(data,start,stop):
+def apply_bandpass_filter(data,start,stop,channels=list(range(8))):
     """
         Inputs:
             data {type:np.ndarray, shape:(epochs,config.CHANNELS,chunk_size), ndim:3}
@@ -75,9 +75,8 @@ def apply_bandpass_filter(data,start,stop):
     
     filteredData = np.zeros(shape=data.shape)
 
-    for c in range(data.shape[1]):
-        state = [0,0,0,0,0,0]
+    for c in channels:
         for e in range(data.shape[0]):
-            filteredData[e,c], state = bandpass(data[e,c,:].reshape(-1),state,[start,stop])
+            filteredData[e,c], config.filter_states['bandpass'][c] = bandpass(data[e,c,:].reshape(-1),config.filter_states['bandpass'][c],[start,stop])
     
     return filteredData

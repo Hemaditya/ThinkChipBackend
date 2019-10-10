@@ -1,4 +1,4 @@
-
+import numpy as np
 # Example: plot the 0.5 - 2 Hz band
 def bandpower(data, sf, band, window_sec=None, relative=False):
     """Compute the average power of the signal x in a specific frequency band.
@@ -89,9 +89,10 @@ def get_bandpower(data, channels=[0]):
     for i,c in enumerate(data):
             bandP = []
             for k in band:
-                    bp = b.bandpower(c,250.0,band[k],2)
+                    bp = bandpower(c,250.0,band[k],2)
                     bandP.append(bp)
             chanD.append(bandP)
 
-    bandPower = np.asarray(chanD).tranpose(1,0,2)
+    print(np.asarray(chanD).shape)
+    bandPower = np.asarray(chanD)
     return bandPower
