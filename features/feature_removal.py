@@ -25,7 +25,7 @@ def energy_of_epoch(data):
 	print(f"CONSOLE: ENEGERGY: {energy}")
 	return energy
 
-def remove_bad_epochs(data,threshold=100, channels=[0],sliding_window=True):
+def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_window=True):
 	"""
 		Inputs:
 			data:{type:np.ndarray, shape:(epochs,config.CHANNELS,config.CHUNK_SIZE)}
@@ -47,7 +47,7 @@ def remove_bad_epochs(data,threshold=100, channels=[0],sliding_window=True):
 	data = filters.apply_bandpass_filter(data,1,10)
 	data = data.transpose(1,0,2)
 	data = data.reshape(data.shape[0],-1)
-	
+
 	# Puts each channel as a numpy array in the list
 	dataIterator = []
 	for c in channels:
@@ -62,7 +62,7 @@ def remove_bad_epochs(data,threshold=100, channels=[0],sliding_window=True):
 	bad_epochs = []
 	for c in channels:
 		for index, block in enumerate(dataIterator[c]):
-			if(energy_of_epoch(block) >= threshold):
+			if(thresh_fn(block) >= threshold):
 				bad_epochs.append(index)
 
 	# Reshape it back to epochs,channels,chunk_size
