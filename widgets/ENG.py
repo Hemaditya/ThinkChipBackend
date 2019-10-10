@@ -7,6 +7,8 @@ import config
 import pickle
 import numpy as np
 import threading
+import features as ft
+
 
 class ENG():
     ''' The base class for ENG module '''
@@ -20,6 +22,8 @@ class ENG():
         # This is the defult and can be reset
         self.trails = trails
         self.games = np.load(config.ROOT_DIR/'widgets/games.npy')
+
+        self.attention_matrix = []
 
     def save_data(self,data,game,f=0,verbose=False):
         ''' This function is called whenever you want to save the data '''
@@ -48,13 +52,65 @@ class ENG():
             print(f"CONSOLE: Saving data")
         with open(file_path,'wb+') as f:
             pickle.dump(self.data_buffer[1:],f)
-    
+
+    def attention_per_channel(self, bandpower):
+        """bandpower - numpy array of length 5"""
+        # Do something to return attention given bandpower for
+        # a single channel for a single epoch
+
+        # temporary fix change this appropriately
+        return bandpower[3]/np.mean(bandpower)
+
+    def attention_overall(self, attention_per_channel):
+        """attention_per_channel - np.array(num_of_channels)"""
+        # Do something to generate
+        # self.attention
+        return np.mean(attention_per_channel)
+
+    def test_start_session(self, game_name, channels=[0], read_length=10):
+        """This function starts the widget and calls the functions to get data from cyton board
+        using self.data_reader. Length of data section (temp_data) that is read at a single time
+        is determined by read_length. This data section (temp_data) is passed to get_attention
+        (in a different thread) which calculates the attention matrix for this data.
+        channels: list of channels to use"""
+        while True:
+            temp_data = config.data_reader.read_chunk(read_length)
+
+            # Thread because the below has too many loops
+            # We don't have to drop data, as data will get dropped if
+            # data_reader.read_chunk cannot be called for too long.
+            t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
+            t.start()
+
+    def get_attention(self, temp_data, channel_mask=[0], threshold=10):
+        """This function gets the attention matrix from a section of data.
+        length of this data section is determined by read_length.
+        temp_data: np.array(epochs, channels, chunk_size)"""
+        # Remove bad blocks
+        blocks_data = ft.remove_bad_epochs(temp_data, threshold=threshold,
+                                           channels=channel_mask, sliding_window=True)
+
+        blocks_bandpower = []
+        for block in blocks_data:
+            blocks_bandpower.append(ft.get_bandpower(block.reshape(1, block.shape[0], block.shape[1]),
+                                                     channel_mask))
+
+        attention_per_channel = np.zeros((len(blocks_bandpower), len(channel_mask)))
+        for idx, block in enumerate(blocks_bandpower):
+            for channel in channel_mask:
+                attention_per_channel[idx, channel] = self.attention_per_channel(block[channel])
+            attention_per_epoch = self.attention_overall(attention_per_channel[idx])
+            self.attention_matrix.append(attention_per_epoch)
+
+            # For testing. Remove later
+            print(attention_per_epoch)
+
     def run(self):
         ''' This function will be called whenever you want to start the widget '''
 
         # First reset the states variables
         config.reset_filter_states()
-        
+
         x = 0
         while x != 'q':
             for i,g in enumerate(self.games):
@@ -64,9 +120,9 @@ class ENG():
             if x == 'q':
                 return
             if x != 'q':
-                x = int(x) - 1 
+                x = int(x) - 1
                 if(x < 0 or x >= self.games.shape[0]):
-                    print(f"CONSOLE: Enter proper varible") 
+                    print(f"CONSOLE: Enter proper varible")
                     continue
                 self.t = time.strftime("%d%m%y_%H%M%S")
                 for i in range(int(self.trails/5)):

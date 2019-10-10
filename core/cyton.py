@@ -12,5 +12,5 @@ class dataReader():
             if(self.verbose):
                 print(i)
             time.sleep(1)
-        x = np.random.randn(10,8,250)
+        x = np.random.randn(n_chunks,8,250)
         return x
