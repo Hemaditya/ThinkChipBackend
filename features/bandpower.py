@@ -93,6 +93,5 @@ def get_bandpower(data, channels=[0]):
                     bandP.append(bp)
             chanD.append(bandP)
 
-    print(np.asarray(chanD).shape)
     bandPower = np.asarray(chanD)
     return bandPower
