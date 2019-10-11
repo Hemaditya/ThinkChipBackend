@@ -8,6 +8,7 @@ import pickle
 import numpy as np
 import threading
 import features as ft
+from pathlib import Path
 
 class ENG():
     ''' The base class for ENG module '''
@@ -15,7 +16,8 @@ class ENG():
     def __init__(self, widget_path, trails=120):
         ''' Each of the widgets will be initialized with a path to their widget '''
 
-        self.path = widget_path
+        self.path = Path(widget_path)
+        print(self.path)
         self.data_buffer = np.zeros(shape=(1,config.CHANNELS,config.CHUNK_SIZE))
         self.t = time.strftime("%d%m%y_%H%M%S")
         # This is the defult and can be reset
