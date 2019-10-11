@@ -79,6 +79,8 @@ class ENG():
             # Thread because the below has too many loops
             # We don't have to drop data, as data will get dropped if
             # data_reader.read_chunk cannot be called for too long.
+            t1 = threading.Thread(target=self.save_data, args=(data,self.games[x],1))
+            t1.start()
             t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
             t.start()
 
