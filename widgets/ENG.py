@@ -9,7 +9,6 @@ import numpy as np
 import threading
 import features as ft
 
-
 class ENG():
     ''' The base class for ENG module '''
 
@@ -23,6 +22,7 @@ class ENG():
         self.trails = trails
         self.games = np.load(config.ROOT_DIR/'widgets/games.npy')
 
+        self.energy = []
         self.attention_matrix = []
 
     def save_data(self,data,game,f=0,verbose=False):
@@ -52,6 +52,23 @@ class ENG():
             print(f"CONSOLE: Saving data")
         with open(file_path,'wb+') as f:
             pickle.dump(self.data_buffer[1:],f)
+
+    def energy_of_epoch(self, data):
+        """
+            Inputs:
+                data:{type:np.ndarray, shape:(config.CHUNK_SIZE)}
+
+            Outputs:
+                energy:{type:float}
+
+            About this function:
+                This function finds the energy per epoch.
+        """
+        energy = np.square(data)
+        energy = np.mean(energy)
+        print(f"CONSOLE: ENERGY: {energy}")
+        self.energy.append(energy)
+        return energy
 
     def attention_per_channel(self, bandpower):
         """bandpower - numpy array of length 5"""
@@ -84,19 +101,27 @@ class ENG():
             t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
             t.start()
 
-    def get_attention(self, temp_data, channel_mask=[0], threshold=10):
+    def get_attention(self, temp_data, channel_mask=[0], threshold=100):
         """This function gets the attention matrix from a section of data.
         length of this data section is determined by read_length.
         temp_data: np.array(epochs, channels, chunk_size)"""
-        # Remove bad blocks
-        blocks_data = ft.remove_bad_epochs(temp_data, threshold=threshold,
+
+        # Standard Filters
+        temp_data = filters.apply_dc_offset(temp_data)
+        temp_data = filters.apply_notch_filter(temp_data)
+
+        # Remove bad epochs by identifying bad epochs as those containing
+        # energy in 1, 10Hz band above a threshold
+        blocks_data = ft.remove_bad_epochs(temp_data, thresh_fn=self.energy_of_epoch, threshold=threshold,
                                            channels=channel_mask, sliding_window=True)
 
+        # Get band power of each block for all the available channels
         blocks_bandpower = []
         for block in blocks_data:
             blocks_bandpower.append(ft.get_bandpower(block.reshape(1, block.shape[0], block.shape[1]),
                                                      channel_mask))
 
+        # Get the attention_matrix from the bandpower
         attention_per_channel = np.zeros((len(blocks_bandpower), len(channel_mask)))
         for idx, block in enumerate(blocks_bandpower):
             for channel in channel_mask:
