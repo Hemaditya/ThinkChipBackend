@@ -12,7 +12,7 @@ import features as ft
 class ENG():
     ''' The base class for ENG module '''
 
-    def __init__(self,widget_path,trails=120):
+    def __init__(self, widget_path, trails=120):
         ''' Each of the widgets will be initialized with a path to their widget '''
 
         self.path = widget_path
@@ -25,7 +25,7 @@ class ENG():
         self.energy = []
         self.attention_matrix = []
 
-    def save_data(self,data,game,f=0,verbose=False):
+    def save_data(self, data, game, filt_data=False, verbose=False):
         ''' This function is called whenever you want to save the data '''
         """
             Inputs:
@@ -33,25 +33,26 @@ class ENG():
                 - the data that you wanna save.
                 game: string
                 - Name of the game
-                f: int
-                - 1 if you want to filter the data
-                - 0 if you want to save raw data
+                filt_data: int
+                - True if you want to filter the data
+                - False if you want to save raw data
         """
         flag = '[r]'
-        if(f == 1):
+        if(filt_data == 1):
             flag = '[f]'
             if verbose:
                 print(f"CONSOLE: Filtering the data")
             data = filters.apply_dc_offset(data)
             data = filters.apply_notch_filter(data)
 
-        self.data_buffer = np.vstack((self.data_buffer,data))
+        self.data_buffer = np.vstack((self.data_buffer, data))
         file_name = flag+game+"|"+self.t+".pickle"
         file_path = self.path/file_name
         if verbose:
             print(f"CONSOLE: Saving data")
-        with open(file_path,'wb+') as f:
-            pickle.dump(self.data_buffer[1:],f)
+
+        with open(file_path, 'wb+') as f:
+            pickle.dump(self.data_buffer[1:], f)
 
     def energy_of_epoch(self, data):
         """
@@ -90,16 +91,18 @@ class ENG():
         is determined by read_length. This data section (temp_data) is passed to get_attention
         (in a different thread) which calculates the attention matrix for this data.
         channels: list of channels to use"""
+        config.reset_filter_states()
         while True:
             temp_data = config.data_reader.read_chunk(read_length)
 
             # Thread because the below has too many loops
             # We don't have to drop data, as data will get dropped if
             # data_reader.read_chunk cannot be called for too long.
-            t1 = threading.Thread(target=self.save_data, args=(data,self.games[x],1))
+            t1 = threading.Thread(target=self.save_data, args=(temp_data, game_name, True))
             t1.start()
-            t = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
-            t.start()
+
+            t2 = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
+            t2.start()
 
     def get_attention(self, temp_data, channel_mask=[0], threshold=100):
         """This function gets the attention matrix from a section of data.
