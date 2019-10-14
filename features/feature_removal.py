@@ -70,9 +70,9 @@ def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_wind
 	dataIterator = dataIterator.transpose(1,0,2)
 	# Remove duplicate epochs
 	bad_epochs = np.array(list(set(bad_epochs)))
-	print(bad_epochs)
+	#print(bad_epochs)
 	# Now delete these bad epochs
 	data = np.delete(dataIterator, bad_epochs, axis=0)
-	print(f"CONSOLE: deleted bad epochs, new data shape: {data.shape}")
+	#print(f"CONSOLE: deleted bad epochs, new data shape: {data.shape}")
 
 	return data
