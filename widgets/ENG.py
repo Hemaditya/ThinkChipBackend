@@ -25,6 +25,7 @@ class ENG():
 		self.games = np.load(config.ROOT_DIR/'widgets/games.npy')
 		self.energy = []
 		self.attention_matrix = []
+        self.bandpower = []
 
 	def save_data(self, data, game, filt_data=False, verbose=False):
 		''' This function is called whenever you want to save the data '''
@@ -125,8 +126,10 @@ class ENG():
 		# Get band power of each block for all the available channels
 		blocks_bandpower = []
 		for block in blocks_data:
+
 			blocks_bandpower.append(ft.get_bandpower(block.reshape(1, block.shape[0], block.shape[1]),
 													 channel_mask))
+			self.bandpower.append(blocks_bandpower[-1])
 
 		# Get the attention_matrix from the bandpower
 		attention_per_channel = np.zeros((len(blocks_bandpower), len(channel_mask)))
@@ -138,7 +141,7 @@ class ENG():
 
 			# For testing. Remove later
 			#print(attention_per_epoch)
-		
+
 
 	def run(self):
 		''' This function will be called whenever you want to start the widget '''
