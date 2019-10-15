@@ -35,14 +35,14 @@ SAMPLING_FREQUENCY = 250
 # CHANNELS  variable is also device specific
 CHANNELS = 8
 
-# threshold class will hold thresholds for all the different artifacts 
+# threshold class will hold thresholds for all the different artifacts
 class threshold():
     '''
         This module is a place to hold different thresholds
     '''
 
     def __init__(self):
-        
+
         EYE_BLINK = 100 # After signal is bandpassed between 1,10
 
 THRESHOLD = threshold()
@@ -54,12 +54,14 @@ WIDGETS = {}
 
 """ This file will hold the reader or streamer for the data"""
 
-from core.cyton import dataReader
-from core.app import OpenBCI
-data_reader = dataReader()
-#data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
-#data_reader = None
-
+try:
+    from core.app import OpenBCI
+    data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
+    print('Using OpenBCI')
+except ModuleNotFoundError:
+    from core.cyton import dataReader
+    print('Using config.dataReader - random number')
+    data_reader = dataReader()
 
 # These are the settings for filters
 filter_states = {}
