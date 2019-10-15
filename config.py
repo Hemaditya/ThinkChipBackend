@@ -53,7 +53,6 @@ THRESHOLD = threshold()
 WIDGETS = {}
 
 """ This file will hold the reader or streamer for the data"""
-
 try:
     from core.app import OpenBCI
     data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
