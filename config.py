@@ -56,8 +56,10 @@ WIDGETS = {}
 
 from core.cyton import dataReader
 from core.app import OpenBCI
-data_reader = dataReader()
-#data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
+try:
+	data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
+except:
+	data_reader = dataReader()
 #data_reader = None
 
 
