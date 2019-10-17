@@ -57,7 +57,7 @@ try:
     from core.app import OpenBCI
     data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
     print('Using OpenBCI')
-except ModuleNotFoundError:
+except :
     from core.cyton import dataReader
     print('Using config.dataReader - random number')
     data_reader = dataReader()
