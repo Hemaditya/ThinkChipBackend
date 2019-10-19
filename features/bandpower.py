@@ -51,7 +51,7 @@ def bandpower(data, sf, band, window_sec=None, relative=False):
         bp /= simps(psd, dx=freq_res)
     return bp
 
-def get_bandpower(data, channels=[0]):
+def get_bandpower(data, channels=[0], relative=False):
     """
        About this function:
             - Gets the bandpower of a signal and seperates each bands into 5 categories:
@@ -89,7 +89,7 @@ def get_bandpower(data, channels=[0]):
     for i,c in enumerate(data):
             bandP = []
             for k in band:
-                    bp = bandpower(c,250.0,band[k],2)
+                    bp = bandpower(c,250.0,band[k],2,relative=relative)
                     bandP.append(bp)
             chanD.append(bandP)
 
