@@ -95,3 +95,20 @@ def get_bandpower(data, channels=[0], relative=False):
 
     bandPower = np.asarray(chanD)
     return bandPower
+
+def epoch_bandpower(*args,per_epochs=1,relative=False):
+    ''' You can give as many files as you want an this function will find the 
+        bandpower for each of them and return them as a list '''
+    ''' If relative is True, then bandpower percentage for each band will be calculated'''
+    ''' Per epochs refers to how many epochs together will be used to find bandpower.'''
+    
+    _bandpower = []
+    for j, data in enumerate(args):
+        print(f"Processing file:{j+1}")
+        idxs = list(range(0,data.shape[0],per_epochs))
+        _b = []
+        for i in idxs:
+            _b.append(get_bandpower(data[i:i+per_epochs],relative=relative))
+        _bandpower.append(np.array(_b))
+    
+    return _bandpower
