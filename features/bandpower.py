@@ -107,10 +107,10 @@ def epoch_bandpower(*args,per_epoch=1,channels=[0],relative=False):
     for j, data in enumerate(args):
         config.reset_filter_states()
         print(f"Processing file:{j+1}")
-        idxs = list(range(0,data.shape[0],per_epochs))
+        idxs = list(range(0,data.shape[0],per_epoch))
         _b = []
         for i in idxs:
-            _b.append(get_bandpower(data[i:i+per_epochs],relative=relative,channels=channels))
+            _b.append(get_bandpower(data[i:i+per_epoch],relative=relative,channels=channels))
         _bandpower.append(np.array(_b))
     
     if(len(_bandpower) == 1):
