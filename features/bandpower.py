@@ -1,4 +1,5 @@
 import numpy as np
+import config
 # Example: plot the 0.5 - 2 Hz band
 def bandpower(data, sf, band, window_sec=None, relative=False):
     """Compute the average power of the signal x in a specific frequency band.
@@ -96,7 +97,7 @@ def get_bandpower(data, channels=[0], relative=False):
     bandPower = np.asarray(chanD)
     return bandPower
 
-def epoch_bandpower(*args,per_epochs=1,relative=False):
+def epoch_bandpower(*args,per_epoch=1,channels=[0],relative=False):
     ''' You can give as many files as you want an this function will find the 
         bandpower for each of them and return them as a list '''
     ''' If relative is True, then bandpower percentage for each band will be calculated'''
@@ -104,11 +105,15 @@ def epoch_bandpower(*args,per_epochs=1,relative=False):
     
     _bandpower = []
     for j, data in enumerate(args):
+        config.reset_filter_states()
         print(f"Processing file:{j+1}")
         idxs = list(range(0,data.shape[0],per_epochs))
         _b = []
         for i in idxs:
-            _b.append(get_bandpower(data[i:i+per_epochs],relative=relative))
+            _b.append(get_bandpower(data[i:i+per_epochs],relative=relative,channels=channels))
         _bandpower.append(np.array(_b))
     
-    return _bandpower
+    if(len(_bandpower) == 1):
+        return _bandpower[0]
+    else:
+        return _bandpower
