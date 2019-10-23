@@ -1,5 +1,6 @@
 import numpy as np
 import config
+import matplotlib.pyplot as plt
 # Example: plot the 0.5 - 2 Hz band
 def bandpower(data, sf, band, window_sec=None, relative=False):
     """Compute the average power of the signal x in a specific frequency band.
@@ -117,3 +118,23 @@ def epoch_bandpower(*args,per_epoch=1,channels=[0],relative=False):
         return _bandpower[0]
     else:
         return _bandpower
+
+def plot_bandpower(data,bands=['delta','theta','alpha','beta']):
+    ''' Plot the badpower of a given data'''
+    ''' Expected Input: (epochs, channels, bands)'''
+    
+    w, h = len(bands)//2*7, (len(bands)//2+1)*8
+    fig = plt.figure(figsize=(w,h))
+    nrows = len(bands)//2 + 1 # // is the same as divide and do math.floor
+    ncols = 2
+    
+    data = data.transpose(1,0,2)
+    for i, b in enumerate(data):
+        ax = fig.add_subplot(nrows,ncols,i+1)
+        for j, band_ in enumerate(bands):
+            ax.plot(b[:,j].reshape(-1), alpha=0.6, label=bands[j])
+            ax.set_title(f"Channel {i+1}")
+            ax.set_xlabel('Epoch')
+            ax.set_ylabel('bandpower')
+            ax.legend()
+
