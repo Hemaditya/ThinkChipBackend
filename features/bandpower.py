@@ -123,7 +123,7 @@ def plot_bandpower(data,bands=['delta','theta','alpha','beta']):
     ''' Plot the badpower of a given data'''
     ''' Expected Input: (epochs, channels, bands)'''
     
-    w, h = len(bands)//2*7, (len(bands)//2+1)*8
+    w, h = len(bands)//2*7, (len(bands)//2)*8
     fig = plt.figure(figsize=(w,h))
     nrows = len(bands)//2 + 1 # // is the same as divide and do math.floor
     ncols = 2
