@@ -1,4 +1,6 @@
 import numpy as np
+import config
+import matplotlib.pyplot as plt
 # Example: plot the 0.5 - 2 Hz band
 def bandpower(data, sf, band, window_sec=None, relative=False):
     """Compute the average power of the signal x in a specific frequency band.
@@ -51,7 +53,7 @@ def bandpower(data, sf, band, window_sec=None, relative=False):
         bp /= simps(psd, dx=freq_res)
     return bp
 
-def get_bandpower(data, channels=[0]):
+def get_bandpower(data, channels=[0], relative=False):
     """
        About this function:
             - Gets the bandpower of a signal and seperates each bands into 5 categories:
@@ -89,9 +91,50 @@ def get_bandpower(data, channels=[0]):
     for i,c in enumerate(data):
             bandP = []
             for k in band:
-                    bp = bandpower(c,250.0,band[k],2)
+                    bp = bandpower(c,250.0,band[k],2,relative=relative)
                     bandP.append(bp)
             chanD.append(bandP)
 
     bandPower = np.asarray(chanD)
     return bandPower
+
+def epoch_bandpower(*args,per_epoch=1,channels=[0],relative=False):
+    ''' You can give as many files as you want an this function will find the 
+        bandpower for each of them and return them as a list '''
+    ''' If relative is True, then bandpower percentage for each band will be calculated'''
+    ''' Per epochs refers to how many epochs together will be used to find bandpower.'''
+    
+    _bandpower = []
+    for j, data in enumerate(args):
+        config.reset_filter_states()
+        print(f"Processing file:{j+1}")
+        idxs = list(range(0,data.shape[0],per_epoch))
+        _b = []
+        for i in idxs:
+            _b.append(get_bandpower(data[i:i+per_epoch],relative=relative,channels=channels))
+        _bandpower.append(np.array(_b))
+    
+    if(len(_bandpower) == 1):
+        return _bandpower[0]
+    else:
+        return _bandpower
+
+def plot_bandpower(data,bands=['delta','theta','alpha','beta']):
+    ''' Plot the badpower of a given data'''
+    ''' Expected Input: (epochs, channels, bands)'''
+    
+    w, h = len(bands)//2*7, (len(bands)//2)*8
+    fig = plt.figure(figsize=(w,h))
+    nrows = len(bands)//2 + 1 # // is the same as divide and do math.floor
+    ncols = 2
+    
+    data = data.transpose(1,0,2)
+    for i, b in enumerate(data):
+        ax = fig.add_subplot(nrows,ncols,i+1)
+        for j, band_ in enumerate(bands):
+            ax.plot(b[:,j].reshape(-1), alpha=0.6, label=bands[j])
+            ax.set_title(f"Channel {i+1}")
+            ax.set_xlabel('Epoch')
+            ax.set_ylabel('bandpower')
+            ax.legend()
+
