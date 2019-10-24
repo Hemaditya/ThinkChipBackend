@@ -109,7 +109,7 @@ class ENG():
                         t2 = threading.Thread(target=self.get_attention, args=(temp_data, channels,))
                         t2.start()
 
-        def get_attention(self, temp_data, channel_mask=[0], threshold=100, keep_bad_epochs=False):
+        def get_attention(self, temp_data, channel_mask=[0], threshold=100, keep_bad_epochs=False,apply_filters=True):
                 """This function gets the attention matrix from a section of data.
                 length of this data section is determined by read_length.
                 temp_data: np.array(epochs, channels, chunk_size)
@@ -117,8 +117,9 @@ class ENG():
                 """
 
                 # Standard Filters
-                temp_data = filters.apply_dc_offset(temp_data)
-                temp_data = filters.apply_notch_filter(temp_data)
+                if(apply_filters):
+                    temp_data = filters.apply_dc_offset(temp_data)
+                    temp_data = filters.apply_notch_filter(temp_data)
 
                 # Remove bad epochs by identifying bad epochs as those containing
                 # energy in 1, 10Hz band above a threshold
