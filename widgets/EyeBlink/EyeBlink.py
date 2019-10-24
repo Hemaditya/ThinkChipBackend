@@ -6,6 +6,9 @@ import pickle
 import time
 import config
 from pathlib import Path
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import os
 
 class EyeBlink():
 	''' Module to detect/read data for Eye Blinks '''
@@ -20,6 +23,11 @@ class EyeBlink():
 		self.name = name
 		self.t = time.strftime("%d%m%y_%H%M%S")
 		self.data_buffer = np.zeros(shape=(1,config.CHANNELS,config.CHUNK_SIZE))
+
+	def run_browser(self):
+		self.driver = webdriver.Firefox(executable_path='./geckodriver')
+		path = os.getcwd()+'/index.html'
+		self.driver.get('file://'+path)
 
 	def save_data(self,data,f=0,verbose=False):
 		''' This function is called whenever you want to save the data '''
@@ -64,15 +72,15 @@ class EyeBlink():
 
 		if(data.max() <= 200.0 and data.max() >= 100.0):
 			print("Blink Detected")
+			self.driver.find_element_by_tag_name('body').send_keys(Keys.ARROW_UP)
 		else:
 			print("No Blink Detected")
 		
 
-	def run_real_time(self):
+	def run_real_time(self,channels=0):
 		while True:
 			data = config.data_reader.read_chunk(n_chunks=1)
-			t = threading.Thread(target=self.detect_energy,args=(data,1))
-			t.start()
+			self.detect_blinks(data,channels)
 
 	
 	def collect(self,verbose=False):
