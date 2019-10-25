@@ -77,19 +77,3 @@ def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_wind
         #print(f"CONSOLE: deleted bad epochs, new data shape: {data.shape}")
 
         return data
-
-def clean_data(*args, channels=[0], threshold=400):
-    ''' This funtion will clean up the data and remove bad epochs based on the threshold'''
-    ''' Each numpy array passed as an argument is treated as a seperate data file and then processed'''
-    
-    clean_data = []
-    
-    for i, data_file in enumerate(args):
-        print(f"Processing file:{i+1}")
-        config.reset_filter_states()
-        clean_data.append(remove_bad_epochs(data_file,energy_of_epoch,channels=channels,threshold=threshold))
-        
-    if(len(clean_data) == 1):
-        return clean_data[0]
-    else:
-        return clean_data
