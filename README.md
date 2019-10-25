@@ -1,49 +1,44 @@
-# ThinkChipBackend
+## t-rex-runner
 
-This will be the backend Engine for all the widgets we will be building.
-We will seperate different modules and keep them seperately.
+the trex runner game extracted from chrome offline err page.
 
-## [MODULE] - test
-This module has jupyter notebooks which are used to test different modules.
+see the [source](https://cs.chromium.org/chromium/src/components/neterror/resources/offline.js?q=t-rex+package:%5Echromium$&dr=C&l=7) from chromium
 
-## [MODULE] - filters
-This is the module which will hold all the filters that are applied to the raw signal as a processing step.
 
-## [MODULE] - core
-This is the module which will hold the code which is responsible to read the data from the device and stream it to
-either a port or a socket.
+[go and enjoy! :smile: ](http://wayou.github.io/t-rex-runner/)
 
-## [MOUDLE] - features
-This is the module responsible for detecting and/or certain features in the filtered signal, based on some threshold.
+![chrome offline game cast](assets/screenshot.gif)
 
-## [MODULE] - data
-This is the module responsible for handling data.
+## Interesting Forks/In Chinese, we call it 「花样玩法」
 
-## [MODULE] - session
-This is the module which is responsible for creating different sessions for different users.
+- [vianroyal](https://github.com/vianroyal)/[t-rex-runner](https://github.com/vianroyal/t-rex-runner) [Kumamon runner](http://vianroyal.github.io/t-rex-runner/) 
+<br>
 
-## [MODULE] - widgets
-This is the module which holds all the Widgets that we will experiment on.
+![](assets/kumamon-runner.gif)
 
-# TODO
-Do in remove_bad_epochs function
-- [x] Make a method in Iterator class which gives array (epochs, channels, chunk_size)
-- [x] Then create np.array(epochs - bad_epochs, channels, chunk_size)
-- [x] Return this new array
-Later
-- [] Test this alongwith the real time implementation changes in ENG.py
-- - [] Write a test_main.py file that initializes ENG.py from the main directory.
-  - [] Plot the attention matrix when the session ends.
-  - [] Save the attention matrix alongwith filtered data in some test_data folder.
-Later Later
-- [] Write proper code for attention_per_channel and attention_overall
-Later Later Later
-- [] Play game and plot the attention_matrix
+- [xkuga](https://github.com/xkuga)/[t-rex-runner](https://github.com/xkuga/t-rex-runner) [Hello KuGou](http://hellokugou.com/) 
+<br>
 
-- [x] Split incoming data into overlapping blocks.
-		- Created an Iterator for this.
-- [x] Functions - to get energy from a chunk, to do thresholding
-- [x] All utility functions are in place.
-- [x] Run the incoming blinks with these functions and output Blink or No Blink
-- [x] Store incoming chunks as an array and delete eye blink chunks from the array.
-- [] Pass the resultant chunks array
+![](assets/hello-kugou.gif)
+
+- [d-nery](https://github.com/d-nery/)/[t-rex-runner](https://github.com/d-nery/t-rex-runner) [Novas coisas](http://d-nery.github.io/t-rex-runner/) 
+<br>
+
+![](assets/novas-coisas.gif)
+
+- [chirag64](https://github.com/chirag64)/[t-rex-runner-bot](https://github.com/chirag64/t-rex-runner-bot) [t-rex runner bot](https://chirag64.github.io/t-rex-runner-bot/) 
+<br>
+
+![](assets/t-rex-runner-bot.gif)
+
+- [19janil](https://github.com/19janil)/[t-rex-runner](https://github.com/19janil/t-rex-runner) [t-rex runner](https://19janil.github.io/t-rex-runner/) 
+<br>
+
+![](assets/t-rex-runner-19janil.gif)
+
+- [enthus1ast](https://github.com/enthus1ast)/[chromeTrip](https://github.com/enthus1ast/chromeTrip) [Chrome Trip by code0](https://code0.itch.io/chrome-trip) 
+<br>
+
+![](https://user-images.githubusercontent.com/13794470/37289691-964618be-260a-11e8-8c4a-6df04d6c490d.gif)
+
+
