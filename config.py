@@ -48,7 +48,7 @@ try:
     data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
     print('Using OpenBCI')
 except :
-    from core.cyton import dataReader
+    from core.random_gen import dataReader
     print('Using config.dataReader - random number')
     data_reader = dataReader()
 
