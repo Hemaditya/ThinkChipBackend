@@ -11,10 +11,11 @@ import matplotlib.pyplot as plt
 from features import remove_bad_epochs
 from features import energy_of_epoch
 
-def load_all_pickle_files(path,vstack=False):
+def load_all_pickle_files(path,vstack=False,remove_first=10):
     # This function will load the data from all the pickle files in the given path variable
     # If vstack is true, then it will combine data of all files into a single numpy array
     # by stacking them one upon other
+    # Remove first specifies the number of epoch you want to ignore at the beginning
     path = Path(path)
     if (os.path.exists(path)):
         print(f"Loading data from {path} ")
@@ -24,18 +25,21 @@ def load_all_pickle_files(path,vstack=False):
         return 
 
     data = []
+    if(remove_first != 0):
+        print(f"First {remove_first} epochs will be removed while loading the data.")
     for file in os.listdir(path):
         if 'pickle' in file:
             print(f"Loading File: {file}")
             with open(path/file,'rb') as f_:
                 d = pickle.load(f_)
-                data.append(d)
+                data.append(d[remove_first:])
        
     if(vstack == True):
         print(f"Using vstack=True")
         data = np.vstack(data)
     else:
-        data = np.array(data)
+        #data = np.array(data)
+        pass
     return data
 
 def plot_signal(data,channels=[0]):
