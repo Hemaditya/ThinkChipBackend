@@ -26,7 +26,15 @@ def energy_of_epoch(data,verbose=False):
             print(f"CONSOLE: ENEGERGY: {energy}")
         return energy
 
-def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_window=True):
+def max_amplitude(data:np.ndarray):
+        """
+                input data shape should be config.CHUNK_SIZE
+
+                output: max of that chunk
+        """
+        return np.max(np.abs(data))
+
+def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_window=True, do_bandpass=False):
         """
                 Inputs:
                         data:{type:np.ndarray, shape:(epochs,config.CHANNELS,config.CHUNK_SIZE)}
@@ -44,10 +52,22 @@ def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_wind
                 About this function:
                         This function finds the energy per epoch.
         """
-        oldData = np.copy(data)
-        data = filters.apply_bandpass_filter(data,1,10)
+        proper_old_data = np.copy(data)
+        proper_old_data = proper_old_data.transpose(1,0,2)
+        oldData = proper_old_data.reshape(proper_old_data.shape[0],-1)
+        if(do_bandpass == True):
+            data = filters.apply_bandpass_filter(data,1,10)
         data = data.transpose(1,0,2)
         data = data.reshape(data.shape[0],-1)
+
+        # Make an iterator for old data also to make sure you are sending the older data and not the bandpassed one
+        oldDataIterator = []
+        for c in channels:
+                if(sliding_window == True):
+                        oldDataIterator.append(utils.iterator.getIterator(oldData[c]))
+                else:
+                        oldDataIterator.append(proper_old_data[c])
+        oldDataIterator = np.asarray(oldDataIterator).transpose(1,0,2)
 
         # Puts each channel as a numpy array in the list
         dataIterator = []
@@ -73,7 +93,7 @@ def remove_bad_epochs(data, thresh_fn, threshold=100, channels=[0], sliding_wind
         bad_epochs = np.array(list(set(bad_epochs)))
         #print(bad_epochs)
         # Now delete these bad epochs
-        data = np.delete(dataIterator, bad_epochs, axis=0)
+        data = np.delete(oldDataIterator, bad_epochs, axis=0)
         #print(f"CONSOLE: deleted bad epochs, new data shape: {data.shape}")
 
         return data

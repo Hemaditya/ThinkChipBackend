@@ -47,7 +47,7 @@ try:
     from core.app import OpenBCI
     data_reader = OpenBCI(chunk_size=CHUNK_SIZE)
     print('Using OpenBCI')
-except :
+except:
     from core.random_gen import dataReader
     print('Using config.dataReader - random number')
     data_reader = dataReader()

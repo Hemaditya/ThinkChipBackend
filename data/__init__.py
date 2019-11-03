@@ -1,4 +1,3 @@
-import sys
-sys.path.append('../')
-
-from data.load_data import *
+from .load_data import *
+from .attention_metrics import *
+from .plotting_functions import *
