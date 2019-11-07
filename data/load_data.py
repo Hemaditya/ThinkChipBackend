@@ -10,6 +10,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from features import remove_bad_epochs
 from features import energy_of_epoch
+from features.bandpower import get_bandpower
+
+def load_pickle_file(file_name, remove_first=10):
+    path = Path(file_name)
+    if (os.path.exists(path)):
+        print(f"Loading data file {path} ")
+        pass
+    else:
+        print(f"The file: {path} does not exist")
+        return 
+
+    if(remove_first != 0):
+        print(f"First {remove_first} epochs will be removed while loading the data.")
+
+    with open(path, 'rb') as f_:
+        d = pickle.load(f_)
+        d = d[remove_first:]
+
+    return d
+
 
 def load_all_pickle_files(path,vstack=False,remove_first=10):
     # This function will load the data from all the pickle files in the given path variable
@@ -58,7 +78,7 @@ def plot_signal(data,channels=[0]):
         ax.set_ylabel("Amplitube")
         ax.set_title(f"Channel: {c}")
         
-def clean_data(*args, channels=[0], threshold=400):
+def clean_data(*args, threshold_fn, channels=[0], threshold=400, sliding_window=True, do_bandpass=False):
     ''' This funtion will clean up the data and remove bad epochs based on the threshold'''
     ''' Each numpy array passed as an argument is treated as a seperate data file and then processed'''
     
@@ -67,7 +87,8 @@ def clean_data(*args, channels=[0], threshold=400):
     for i, data_file in enumerate(args):
         print(f"Processing file:{i+1}")
         config.reset_filter_states()
-        clean_data.append(remove_bad_epochs(data_file,energy_of_epoch,channels=channels,threshold=threshold))
+        clean_data.append(remove_bad_epochs(data_file,threshold_fn,channels=channels,threshold=threshold,
+                                            sliding_window=sliding_window, do_bandpass=do_bandpass))
         
     if(len(clean_data) == 1):
         return clean_data[0]
@@ -95,16 +116,16 @@ def epoch_bandpower(*args,per_epoch=1,channels=[0],relative=False):
     else:
         return _bandpower
 
-def plot_bandpower(data,bands=['delta','theta','alpha','beta']):
+def plot_bandpower(data,bands=['delta','theta','alpha','beta'], channels=[0]):
     ''' Plot the badpower of a given data'''
     ''' Expected Input: (epochs, channels, bands)'''
     
-    w, h = len(bands)//2*7, (len(bands)//2)*8
+    w, h = len(channels)*7, len(channels)*8
     fig = plt.figure(figsize=(w,h))
-    nrows = len(bands)//2 + 1 # // is the same as divide and do math.floor
+    nrows = len(channels)//2 + 1
     ncols = 2
     
-    data = data.transpose(1,0,2)
+    data = data.transpose(1,0,2)[channels]
     for i, b in enumerate(data):
         ax = fig.add_subplot(nrows,ncols,i+1)
         for j, band_ in enumerate(bands):
